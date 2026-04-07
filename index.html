@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V-Pro Global | Official Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root { --gold: #D4AF37; --black: #000; --card: #0d0d0d; --white: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--black); color: var(--white); text-align: center; }
+
+        /* Navbar Settings */
+        nav { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 20px; font-weight: 800; color: var(--gold); letter-spacing: 2px; font-style: italic; }
+        .wallet-nav { background: #111; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gold); font-size: 12px; }
+
+        .container { max-width: 500px; margin: auto; padding: 20px; }
+
+        /* Login Design */
+        .auth-card { background: #080808; padding: 35px; border-radius: 25px; border: 1px solid #222; margin-top: 40px; }
+        .btn-social { display: block; width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; margin-bottom: 12px; cursor: pointer; text-transform: uppercase; font-size: 13px; }
+        .btn-google { background: #fff; color: #000; }
+        .btn-fb { background: #1877F2; color: #fff; }
+
+        /* Dashboard Design */
+        .profile-header { display: flex; align-items: center; margin-bottom: 30px; background: #080808; padding: 15px; border-radius: 20px; border: 1px solid #111; text-align: left; }
+        .avatar { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--gold); margin-right: 15px; object-fit: cover; }
+        .user-name { color: var(--gold); font-weight: 800; font-size: 18px; font-style: italic; }
+        .id-badge { background: var(--gold); color: #000; font-size: 10px; padding: 2px 8px; border-radius: 5px; font-weight: 900; }
+
+        .menu-grid { display: grid; gap: 15px; }
+        .menu-item { background: var(--card); border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .menu-item:active { transform: scale(0.95); border-color: var(--gold); }
+        .menu-text { font-size: 13px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Form Overlay */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; display: none; overflow-y: auto; }
+        .form-card { background: #080808; padding: 25px; border-radius: 25px; border: 1px solid var(--gold); margin-top: 20px; }
+        input, textarea { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 14px; border-radius: 12px; margin-bottom: 15px; }
+        .btn-submit { background: var(--gold); color: #000; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+
+        /* Strike & Ban UI */
+        #ban-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 25px; text-align: center; }
+        .strike-msg { color: #ff4444; font-size: 10px; font-weight: bold; margin-top: 5px; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="ban-screen">
+        <h1 style="color:red; font-size: 40px;">🚫 BANNED</h1>
+        <p id="ban-reason" style="margin: 20px 0; color: #888; font-size: 15px;"></p>
+        <button onclick="window.location.href='https://wa.me/918808722351?text=Unban_Request'" class="btn-submit">PAY PENALTY TO UNBAN</button>
+    </div>
+
+    <nav>
+        <div class="logo">V-PRO GLOBAL</div>
+        <div class="wallet-nav">🪙 <span id="nav-coins">0</span> V-Coins</div>
+    </nav>
+
+    <div class="container">
+        <div id="login-section" class="auth-card">
+            <h2 style="color:var(--gold); font-style:italic; margin-bottom:35px; letter-spacing:1px;">ACCESS V-PRO</h2>
+            <button onclick="loginWithGoogle()" class="btn-social btn-google">GOOGLE LOGIN</button>
+            <button class="btn-social btn-fb">FACEBOOK LOGIN</button>
+            <p style="color:#333; font-size:10px; margin-top:25px;">SAFE & ENCRYPTED ACCESS</p>
+        </div>
+
+        <div id="dashboard-section" class="hidden">
+            <div class="profile-header">
+                <img id="user-img" src="" class="avatar">
+                <div>
+                    <h2 class="user-name" id="display-name">Mr. Guest</h2>
+                    <span id="user-id" class="id-badge">ID: --</span>
+                    <p id="strike-info" class="strike-msg"></p>
+                </div>
+            </div>
+
+            <div class="menu-grid">
+                <div class="menu-item" onclick="openForm('Seller')">
+                    <span class="menu-text">💼 Seller Dashboard</span>
+                    <span>▶</span>
+                </div>
+                <div class="menu-item" onclick="openForm('Model')">
+                    <span class="menu-text">📸 Model Casting Hub</span>
+                    <span>▶</span>
+                </div>
+                <div class="menu-item" onclick="openForm('Refer')">
+                    <span class="menu-text">🔗 Refer & Earn</span>
+                    <span>▶</span>
+                </div>
+                <div class="menu-item" onclick="openForm('Promotion')">
+                    <span class="menu-text">🚀 YouTuber Promotion</span>
+                    <span>▶</span>
+                </div>
+            </div>
+
+            <button onclick="logout()" style="background:none; border:none; color:#444; font-size:11px; margin-top:40px; width:100%; letter-spacing:1px;">LOGOUT ACCOUNT</button>
+        </div>
+    </div>
+
+    <div id="form-overlay" class="overlay">
+        <div class="form-card">
+            <h2 id="form-title" style="color:var(--gold); margin-bottom:20px; font-style:italic;"></h2>
+            <div id="form-fields"></div>
+            <button onclick="handleFormSubmission()" class="btn-submit">VERIFY & SUBMIT</button>
+            <button onclick="closeForm()" style="background:none; border:none; color:#555; margin-top:20px; width:100%;">CANCEL</button>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAS_hCWbLbNfcZJ8CJOzR5OOHEhA1xcjJU",
+            authDomain: "v-global-eff1e.firebaseapp.com",
+            projectId: "v-global-eff1e",
+            storageBucket: "v-global-eff1e.firebasestorage.app",
+            messagingSenderId: "686810708424",
+            appId: "1:686810708424:web:cef8d92f19a0e36ca168fd"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentActiveType = "";
+        const bannedWords = ["gaali1", "gaali2"]; // Yahan apni list badhayein
+
+        // Mobile Login
+        function loginWithGoogle() {
+            auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+        }
+
+        auth.getRedirectResult().then(result => { if (result.user) initUser(result.user); });
+        auth.onAuthStateChanged(user => { if (user) initUser(user); else toggleUI(false); });
+
+        async function initUser(user) {
+            const userRef = db.collection('users').doc(user.uid);
+            let doc = await userRef.get();
+            if (!doc.exists) {
+                const snap = await db.collection('users').get();
+                const newId = `ID: ${(snap.size + 1).toString().padStart(2, '0')}`;
+                await userRef.set({ uniqueId: newId, name: user.displayName, vCoins: 100, strikes: 0, status: "Active" });
+                doc = await userRef.get();
+            }
+            const data = doc.data();
+            if (data.status === "Banned") { showBanScreen(data.strikes); return; }
+            toggleUI(true, data, user.photoURL);
+        }
+
+        function toggleUI(isLoggedIn, data = null, photo = "") {
+            document.getElementById('login-section').classList.toggle('hidden', isLoggedIn);
+            document.getElementById('dashboard-section').classList.toggle('hidden', !isLoggedIn);
+            if (isLoggedIn) {
+                document.getElementById('display-name').innerText = data.name;
+                document.getElementById('user-id').innerText = data.uniqueId;
+                document.getElementById('nav-coins').innerText = data.vCoins;
+                document.getElementById('user-img').src = photo;
+                document.getElementById('strike-info').innerText = data.strikes > 0 ? `WARNING: Strikes ${data.strikes}/3` : "";
+            }
+        }
+
+        function showBanScreen(strikes) {
+            document.getElementById('ban-screen').style.display = "flex";
+            document.getElementById('ban-reason').innerText = `You have reached ${strikes} strikes due to abusive language.`;
+        }
+
+        // Form Logic
+        function openForm(type) {
+            currentActiveType = type;
+            document.getElementById('form-overlay').style.display = "block";
+            document.getElementById('form-title').innerText = type + " Registration";
+            let html = type === 'Refer' ? `<input id='f1' placeholder='Enter Referral Code'>` : `<input id='f1' placeholder='Title'><textarea id='f2' placeholder='Description'></textarea>`;
+            document.getElementById('form-fields').innerHTML = html;
+        }
+
+        function closeForm() { document.getElementById('form-overlay').style.display = "none"; }
+
+        async function handleFormSubmission() {
+            const v1 = document.getElementById('f1').value;
+            const v2 = document.getElementById('f2') ? document.getElementById('f2').value : "";
+            
+            // Abusive check
+            if (bannedWords.some(w => v1.includes(w) || v2.includes(w))) {
+                const userRef = db.collection('users').doc(auth.currentUser.uid);
+                const doc = await userRef.get();
+                let s = (doc.data().strikes || 0) + 1;
+                await userRef.update({ strikes: s });
+                if (s >= 4) await userRef.update({ status: "Banned" });
+                location.reload();
+                return;
+            }
+
+            // Auto-Approval
+            await db.collection('submissions').add({ userId: auth.currentUser.uid, type: currentActiveType, data: {v1, v2}, status: "Approved", time: new Date() });
+            alert("Data submitted and automatically approved! ✅");
+            closeForm();
+        }
+
+        function logout() { auth.signOut(); }
+    </script>
+</body>
+</html>
