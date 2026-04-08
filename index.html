@@ -1,73 +1,95 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V-Pro Global | Official Hub</title>
+    <title>V-Pro Global | Supreme Authority Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --gold: #D4AF37; --black: #000; --card: #0d0d0d; --white: #fff; }
+        :root { --gold: #D4AF37; --black: #000; --card: #080808; --red: #ff4444; --vip-rainbow: linear-gradient(45deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--black); color: var(--white); text-align: center; }
-        nav { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 20px; font-weight: 800; color: var(--gold); letter-spacing: 2px; font-style: italic; }
-        .wallet-nav { background: #111; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gold); font-size: 12px; }
+        body { background: var(--black); color: #fff; overflow-x: hidden; }
+
+        /* --- UI COMPONENTS --- */
+        #global-alert { background: var(--vip-rainbow); background-size: 400%; padding: 8px; font-weight: 900; display: none; position: sticky; top: 0; z-index: 1001; text-align: center; font-size: 12px; }
         .container { max-width: 500px; margin: auto; padding: 20px; }
-        .auth-card { background: #080808; padding: 35px; border-radius: 25px; border: 1px solid #222; margin-top: 40px; }
-        .btn-social { display: block; width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; margin-bottom: 12px; cursor: pointer; text-transform: uppercase; font-size: 13px; }
-        .btn-google { background: #fff; color: #000; }
-        .profile-header { display: flex; align-items: center; margin-bottom: 30px; background: #080808; padding: 15px; border-radius: 20px; border: 1px solid #111; text-align: left; }
-        .avatar { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--gold); margin-right: 15px; object-fit: cover; }
-        .user-name { color: var(--gold); font-weight: 800; font-size: 18px; font-style: italic; }
-        .id-badge { background: var(--gold); color: #000; font-size: 10px; padding: 2px 8px; border-radius: 5px; font-weight: 900; }
-        .menu-grid { display: grid; gap: 15px; }
-        .menu-item { background: var(--card); border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .menu-text { font-size: 13px; font-weight: 700; color: var(--gold); text-transform: uppercase; }
+        .card { background: var(--card); border: 1px solid #1a1a1a; padding: 20px; border-radius: 20px; margin-bottom: 15px; position: relative; }
+        
+        /* --- VIP FRAMES & AVATARS --- */
+        .avatar-wrapper { position: relative; width: 90px; height: 90px; margin: auto; display: flex; align-items: center; justify-content: center; }
+        .avatar { width: 70px; height: 70px; border-radius: 50%; z-index: 2; border: 2px solid #111; object-fit: cover; }
+        .frame-vip7 { position: absolute; width: 88px; height: 88px; border-radius: 50%; border: 4px solid transparent; background: var(--vip-rainbow) border-box; mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; animation: spin 2s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- GROWTH TRACKER (PLANE LOGIC) --- */
+        .growth-meter { background: #111; border-radius: 10px; height: 10px; margin: 10px 0; overflow: hidden; }
+        #growth-bar { height: 100%; background: var(--gold); transition: 2s ease-in-out; width: 0%; }
+        
+        /* --- BUTTONS & INPUTS --- */
+        .btn-gold { width: 100%; padding: 14px; background: var(--gold); color: #000; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        .input-box { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">V-PRO GLOBAL</div>
-        <div class="wallet-nav">🪙 <span id="nav-coins">0</span> V-Coins</div>
-    </nav>
+    <div id="global-alert">📢 <span id="alert-text">VIP MESSAGE...</span></div>
 
     <div class="container">
-        <div id="login-section" class="auth-card">
-            <h2 style="color:var(--gold); font-style:italic; margin-bottom:35px;">ACCESS V-PRO</h2>
-            <button onclick="loginWithGoogle()" class="btn-social btn-google">GOOGLE LOGIN</button>
-            <p style="color:#333; font-size:10px; margin-top:25px;">SECURE STARTUP 2026</p>
-        </div>
+        <div id="dashboard">
+            <div class="card" style="text-align:center;">
+                <div class="avatar-wrapper">
+                    <div id="u-frame"></div>
+                    <img id="u-img" src="" class="avatar">
+                </div>
+                <h3 id="u-name" style="color:var(--gold); margin-top:10px;">---</h3>
+                <p id="u-badge" style="font-size:10px; opacity:0.6;">LEVEL: USER</p>
+                <div style="display:flex; justify-content:space-around; margin-top:15px; font-size:12px;">
+                    <span>🪙 <b id="u-coins">0</b></span>
+                    <span>🆔 <b id="u-id">VPG-000</b></span>
+                </div>
+            </div>
 
-        <div id="dashboard-section" class="hidden">
-            <div class="profile-header">
-                <img id="user-img" src="" class="avatar">
-                <div>
-                    <h2 class="user-name" id="display-name">Loading...</h2>
-                    <span id="user-id" class="id-badge">ID: --</span>
-                </div>
+            <div class="card" style="border: 1px solid #222;">
+                <h4 style="color:var(--gold); font-size:11px;">📈 MARKET GROWTH MILESTONE</h4>
+                <div class="growth-meter"><div id="growth-bar"></div></div>
+                <p style="font-size:10px;">Users: <b id="stat-users">0</b> | Milestone: <b id="stat-next">50</b></p>
             </div>
-            <div class="menu-grid">
-                <div class="menu-item">
-                    <span class="menu-text">💼 Seller Dashboard</span>
-                    <span>▶</span>
+
+            <div id="god-panel" class="card hidden" style="border: 2px solid var(--red);">
+                <h4 style="color:var(--red); text-transform:uppercase;">👑 God Monitoring Center</h4>
+                <div id="analytics-plane" style="margin:10px 0; font-size:12px;">
+                    Trend: <b id="trend-txt" style="color:lime;">✈ PLANE UP</b> | Active: <b id="active-count">0</b>
                 </div>
-                <div class="menu-item">
-                    <span class="menu-text">📸 Model Casting Hub</span>
-                    <span>▶</span>
-                </div>
-                <div class="menu-item">
-                    <span class="menu-text">🔗 Refer & Earn</span>
-                    <span>▶</span>
-                </div>
+                <hr style="opacity:0.1; margin:10px 0;">
+                <p style="font-size:10px; color:var(--gold);">Verify Payments / Ban Logs:</p>
+                <div id="pending-payments" style="max-height:150px; overflow-y:auto; font-size:11px;"></div>
+                <button class="btn-gold" style="background:var(--red); color:#fff;" onclick="showAuditLogs()">VIEW ACTION LOGS</button>
             </div>
-            <button onclick="logout()" style="background:none; border:none; color:#444; font-size:11px; margin-top:40px; width:100%; cursor:pointer;">LOGOUT</button>
+
+            <div class="card" style="border: 1px solid #28a745;">
+                <h4 style="color:#28a745;">💎 UNLOCK VIP & V-COINS</h4>
+                <input id="pay-utr" class="input-box" placeholder="Enter 12-Digit UTR/Trans ID">
+                <input id="pay-amt" class="input-box" type="number" placeholder="Amount Paid (Rs.)">
+                <p style="font-size:9px; opacity:0.6;">UPI: <b id="sys-upi">vinayak@upi</b></p>
+                <button class="btn-gold" style="background:#28a745; color:white;" onclick="submitPay()">SUBMIT PROOF</button>
+            </div>
+
+            <div class="card" id="rating-ui">
+                <h4 style="color:var(--gold);">⭐ RATE OUR HUB</h4>
+                <div style="font-size:20px; color:#333;" id="star-row">
+                    <i class="fas fa-star" onclick="rate(1)"></i><i class="fas fa-star" onclick="rate(2)"></i><i class="fas fa-star" onclick="rate(3)"></i><i class="fas fa-star" onclick="rate(4)"></i><i class="fas fa-star" onclick="rate(5)"></i>
+                </div>
+                <button class="btn-gold" onclick="sendReview()" style="height:35px; padding:0; font-size:10px;">SUBMIT RATING</button>
+            </div>
+
+            <button onclick="auth.signOut().then(()=>location.reload())" style="background:none; border:none; color:#444; width:100%; margin-top:20px; font-size:11px;">LOGOUT SYSTEM</button>
         </div>
     </div>
 
@@ -80,58 +102,90 @@
             messagingSenderId: "741845554827",
             appId: "1:741845554827:web:04a75d2207df326d72a68e"
         };
-
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const GOD_EMAIL = "vinayakt617@gmail.com";
 
-        async function loginWithGoogle() {
+        auth.onAuthStateChanged(user => { if(user) loadApp(user); else login(); });
+
+        async function login() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            try {
-                const result = await auth.signInWithPopup(provider);
-                setupUser(result.user);
-            } catch (error) {
-                alert("Login fail: " + error.message);
+            await auth.signInWithPopup(provider);
+        }
+
+        async function loadApp(user) {
+            const userRef = db.collection('users').doc(user.uid);
+            const doc = await userRef.get();
+            if(!doc.exists) {
+                const snap = await db.collection('users').get();
+                await userRef.set({ name: user.displayName, email: user.email, vCoins: 100, uniqueId: `VPG-${snap.size+101}`, vipLevel: 0, status: "Active", lastSeen: Date.now() });
             }
+            
+            const data = (await userRef.get()).data();
+            if(data.status === "Banned") { document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:100px;'>YOU ARE BANNED 🚫</h1>"; return; }
+
+            // UI Data Load
+            document.getElementById('u-name').innerText = data.name;
+            document.getElementById('u-img').src = user.photoURL;
+            document.getElementById('u-coins').innerText = data.vCoins;
+            document.getElementById('u-id').innerText = data.uniqueId;
+            
+            if(data.vipLevel > 0) document.getElementById('u-frame').className = `frame-vip${data.vipLevel}`;
+            if(user.email === GOD_EMAIL) {
+                document.getElementById('god-panel').classList.remove('hidden');
+                loadPendingPayments();
+                trackMarket();
+            }
+            updateGrowth();
         }
 
-        auth.onAuthStateChanged(user => {
-            if (user) setupUser(user);
-            else showLogin();
-        });
-
-        async function setupUser(user) {
-            if (!user) return;
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('dashboard-section').classList.remove('hidden');
-            document.getElementById('display-name').innerText = user.displayName;
-            document.getElementById('user-img').src = user.photoURL;
-
-            try {
-                const userRef = db.collection('users').doc(user.uid);
-                let doc = await userRef.get();
-                if (!doc.exists) {
-                    const snap = await db.collection('users').get();
-                    const newId = `VPG-${(snap.size + 101)}`;
-                    await userRef.set({
-                        uniqueId: newId, name: user.displayName, vCoins: 100, status: "Active"
-                    });
-                    document.getElementById('user-id').innerText = newId;
-                    document.getElementById('nav-coins').innerText = "100";
-                } else {
-                    const data = doc.data();
-                    document.getElementById('user-id').innerText = data.uniqueId;
-                    document.getElementById('nav-coins').innerText = data.vCoins;
-                }
-            } catch (e) { console.log(e); }
+        // --- MARKET & GROWTH ENGINE ---
+        async function updateGrowth() {
+            const snap = await db.collection('users').get();
+            const total = snap.size;
+            const milestones = [50, 100, 500, 1000, 5000, 10000, 100000];
+            const next = milestones.find(m => m > total) || "MAX";
+            document.getElementById('stat-users').innerText = total;
+            document.getElementById('stat-next').innerText = next;
+            document.getElementById('growth-bar').style.width = (total/next*100) + "%";
         }
 
-        function showLogin() {
-            document.getElementById('login-section').classList.remove('hidden');
-            document.getElementById('dashboard-section').classList.add('hidden');
+        // --- PAYMENT & SECURITY ---
+        async function submitPay() {
+            const utr = document.getElementById('pay-utr').value;
+            const amt = document.getElementById('pay-amt').value;
+            if(utr.length < 10) return alert("Invalid UTR!");
+            await db.collection('transactions').add({ uid: auth.currentUser.uid, name: auth.currentUser.displayName, utr: utr, amount: amt, status: "Pending", time: new Date().toLocaleString() });
+            alert("Payment Submitted. Wait for Verification.");
         }
 
-        function logout() { auth.signOut().then(() => { location.reload(); }); }
+        // --- GOD LOGIC (PAYMENT APPROVAL & BAN) ---
+        async function loadPendingPayments() {
+            const snap = await db.collection('transactions').where("status", "==", "Pending").get();
+            let html = "";
+            snap.forEach(doc => {
+                const t = doc.data();
+                html += `<div style='background:#111; padding:10px; border-radius:10px; margin-bottom:5px;'>
+                    ${t.name} (Rs ${t.amount}) <br> UTR: ${t.utr} 
+                    <button onclick="approve('${doc.id}', '${t.uid}', ${t.amount})" style='color:lime;'>[APP]</button>
+                    <button onclick="reject('${doc.id}')" style='color:red;'>[REJ]</button>
+                </div>`;
+            });
+            document.getElementById('pending-payments').innerHTML = html || "No Pending Requests.";
+        }
+
+        async function approve(docId, uid, amt) {
+            const userRef = db.collection('users').doc(uid);
+            await db.runTransaction(async (t) => {
+                const userDoc = await t.get(userRef);
+                const newBal = (userDoc.data().vCoins || 0) + (amt * 50);
+                t.update(userRef, { vCoins: newBal });
+                t.update(db.collection('transactions').doc(docId), { status: "Approved" });
+            });
+            alert("Coins Added!");
+            loadPendingPayments();
+        }
     </script>
 </body>
 </html>
