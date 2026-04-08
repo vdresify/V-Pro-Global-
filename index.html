@@ -1,3 +1,76 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V-Pro Global | Official Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root { --gold: #D4AF37; --black: #000; --card: #0d0d0d; --white: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--black); color: var(--white); text-align: center; }
+        nav { background: #000; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 20px; font-weight: 800; color: var(--gold); letter-spacing: 2px; font-style: italic; }
+        .wallet-nav { background: #111; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gold); font-size: 12px; }
+        .container { max-width: 500px; margin: auto; padding: 20px; }
+        .auth-card { background: #080808; padding: 35px; border-radius: 25px; border: 1px solid #222; margin-top: 40px; }
+        .btn-social { display: block; width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; margin-bottom: 12px; cursor: pointer; text-transform: uppercase; font-size: 13px; }
+        .btn-google { background: #fff; color: #000; }
+        .profile-header { display: flex; align-items: center; margin-bottom: 30px; background: #080808; padding: 15px; border-radius: 20px; border: 1px solid #111; text-align: left; }
+        .avatar { width: 65px; height: 65px; border-radius: 50%; border: 2px solid var(--gold); margin-right: 15px; object-fit: cover; }
+        .user-name { color: var(--gold); font-weight: 800; font-size: 18px; font-style: italic; }
+        .id-badge { background: var(--gold); color: #000; font-size: 10px; padding: 2px 8px; border-radius: 5px; font-weight: 900; }
+        .menu-grid { display: grid; gap: 15px; }
+        .menu-item { background: var(--card); border: 1px solid #1a1a1a; padding: 20px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .menu-text { font-size: 13px; font-weight: 700; color: var(--gold); text-transform: uppercase; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">V-PRO GLOBAL</div>
+        <div class="wallet-nav">🪙 <span id="nav-coins">0</span> V-Coins</div>
+    </nav>
+
+    <div class="container">
+        <div id="login-section" class="auth-card">
+            <h2 style="color:var(--gold); font-style:italic; margin-bottom:35px;">ACCESS V-PRO</h2>
+            <button onclick="loginWithGoogle()" class="btn-social btn-google">GOOGLE LOGIN</button>
+            <p style="color:#333; font-size:10px; margin-top:25px;">SECURE STARTUP 2026</p>
+        </div>
+
+        <div id="dashboard-section" class="hidden">
+            <div class="profile-header">
+                <img id="user-img" src="" class="avatar">
+                <div>
+                    <h2 class="user-name" id="display-name">Loading...</h2>
+                    <span id="user-id" class="id-badge">ID: --</span>
+                </div>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <span class="menu-text">💼 Seller Dashboard</span>
+                    <span>▶</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-text">📸 Model Casting Hub</span>
+                    <span>▶</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-text">🔗 Refer & Earn</span>
+                    <span>▶</span>
+                </div>
+            </div>
+            <button onclick="logout()" style="background:none; border:none; color:#444; font-size:11px; margin-top:40px; width:100%; cursor:pointer;">LOGOUT</button>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyB4Wk-096y9SAhtygKGLoJ1EHZR0WWSUOc",
@@ -12,63 +85,45 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // 1. Redirect ki jagah Popup use karein (Behtar experience ke liye)
-        function loginWithGoogle() {
+        async function loginWithGoogle() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    setupUser(result.user);
-                }).catch((error) => {
-                    console.error("Login Error:", error);
-                    alert("Login fail ho gaya: " + error.message);
-                });
+            try {
+                const result = await auth.signInWithPopup(provider);
+                setupUser(result.user);
+            } catch (error) {
+                alert("Login fail: " + error.message);
+            }
         }
 
-        // 2. Page load hote hi Auth check karein
         auth.onAuthStateChanged(user => {
-            if (user) {
-                setupUser(user);
-            } else {
-                showLogin();
-            }
+            if (user) setupUser(user);
+            else showLogin();
         });
 
         async function setupUser(user) {
             if (!user) return;
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('display-name').innerText = user.displayName;
+            document.getElementById('user-img').src = user.photoURL;
 
             try {
                 const userRef = db.collection('users').doc(user.uid);
                 let doc = await userRef.get();
-                
-                // Naya user hai toh database mein entry karein
                 if (!doc.exists) {
                     const snap = await db.collection('users').get();
-                    const newId = `ID: ${(snap.size + 1).toString().padStart(2, '0')}`;
+                    const newId = `VPG-${(snap.size + 101)}`;
                     await userRef.set({
-                        uniqueId: newId, 
-                        name: user.displayName, 
-                        vCoins: 100, 
-                        status: "Active",
-                        email: user.email,
-                        lastLogin: new Date()
+                        uniqueId: newId, name: user.displayName, vCoins: 100, status: "Active"
                     });
-                    doc = await userRef.get();
+                    document.getElementById('user-id').innerText = newId;
+                    document.getElementById('nav-coins').innerText = "100";
+                } else {
+                    const data = doc.data();
+                    document.getElementById('user-id').innerText = data.uniqueId;
+                    document.getElementById('nav-coins').innerText = data.vCoins;
                 }
-                
-                const data = doc.data();
-                
-                // UI Update - Dashboard dikhayein
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('dashboard-section').classList.remove('hidden');
-                
-                document.getElementById('display-name').innerText = data.name;
-                document.getElementById('user-id').innerText = data.uniqueId;
-                document.getElementById('nav-coins').innerText = data.vCoins;
-                document.getElementById('user-img').src = user.photoURL || 'https://via.placeholder.com/65';
-                
-            } catch (error) {
-                console.error("Database Error:", error);
-            }
+            } catch (e) { console.log(e); }
         }
 
         function showLogin() {
@@ -76,24 +131,7 @@
             document.getElementById('dashboard-section').classList.add('hidden');
         }
 
-        // Baki functions (openForm, logout, etc.) wahi rahenge...
-        function openForm(type) {
-            document.getElementById('form-overlay').style.display = "block";
-            document.getElementById('form-title').innerText = type + " Registration";
-            document.getElementById('form-fields').innerHTML = `<input id='f1' placeholder='Full Name'><textarea id='f2' placeholder='Professional Experience / Details'></textarea>`;
-        }
-
-        function closeForm() { document.getElementById('form-overlay').style.display = "none"; }
-
-        async function handleSubmit() {
-            alert("Data Submitted! Humari team aapse jald sampark karegi. ✅");
-            closeForm();
-        }
-
-        function logout() { 
-            auth.signOut().then(() => {
-                location.reload(); // Logout ke baad page refresh karna behtar hai
-            }); 
-        }
+        function logout() { auth.signOut().then(() => { location.reload(); }); }
     </script>
-    
+</body>
+</html>
