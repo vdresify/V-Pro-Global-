@@ -11,114 +11,113 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root { 
-            --gold: #D4AF37; --black: #000; --card: #080808; 
-            --neon-blue: #00f2ff; --neon-pink: #ff0077; --red: #ff4444;
+            --gold: #D4AF37; --black: #000; --card: #0d0d0d; 
             --rainbow: linear-gradient(45deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--black); color: #fff; overflow-x: hidden; height: 100vh; }
+        body { background: var(--black); color: #fff; overflow-x: hidden; }
 
         .hidden { display: none !important; }
-        .card { background: var(--card); border: 1px solid #1a1a1a; padding: 15px; border-radius: 20px; margin: 10px; position: relative; }
-        .btn-gold { width: 100%; padding: 12px; background: var(--gold); color: #000; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .card { background: var(--card); border: 1px solid #1a1a1a; padding: 15px; border-radius: 20px; margin: 10px; }
+        .btn-gold { width: 100%; padding: 12px; background: var(--gold); color: #000; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         
-        /* FOUNDER EXCLUSIVE FRAME */
-        .founder-aura { border: 4px solid var(--gold) !important; box-shadow: 0 0 25px var(--gold) !important; border-radius: 50% !important; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 25px var(--gold); } 50% { opacity: 0.8; box-shadow: 0 0 45px var(--gold); } 100% { opacity: 1; box-shadow: 0 0 25px var(--gold); } }
+        /* SIGN IN GRID */
+        .signin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+        .day-box { background: #1a1a1a; padding: 10px; border-radius: 10px; text-align: center; font-size: 10px; border: 1px solid #333; }
+        .day-box.active { border-color: var(--gold); color: var(--gold); }
+        .day-box.claimed { background: var(--gold); color: #000; }
 
-        /* AVATAR SYSTEM */
-        .avatar-wrapper { position: relative; width: 110px; height: 110px; margin: auto; display: flex; align-items: center; justify-content: center; margin-top: 20px;}
-        .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #1a1a1a; }
-
-        /* TASK CENTER UI */
-        .task-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 12px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); }
-        .task-row h4 { font-size: 13px; color: #fff; }
-        .task-row p { font-size: 10px; color: #777; }
-
-        .global-notify { background: var(--rainbow); background-size: 400%; padding: 8px; text-align: center; font-size: 10px; font-weight: 900; animation: rainbow-move 5s linear infinite; position: fixed; top: 0; width: 100%; z-index: 5000; color: #fff; cursor: pointer; }
+        .global-notify { background: var(--rainbow); background-size: 400%; padding: 8px; text-align: center; font-size: 10px; font-weight: 900; animation: rainbow-move 5s linear infinite; position: fixed; top: 0; width: 100%; z-index: 5000; color: #fff; }
         @keyframes rainbow-move { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.98); border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 12px 0; z-index: 3000; }
-        .nav-item { color: #555; text-align: center; flex: 1; cursor: pointer; font-size: 20px; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid #222; display: flex; padding: 10px 0; z-index: 3000; }
+        .nav-item { color: #555; text-align: center; flex: 1; cursor: pointer; font-size: 18px; }
         .nav-item.active { color: var(--gold); }
-        .nav-item span { display: block; font-size: 9px; margin-top: 4px; font-weight: bold;}
+        .nav-item span { display: block; font-size: 9px; }
 
-        /* GOD PANEL STYLING */
-        .god-input { width: 100%; padding: 12px; margin: 10px 0; background: #111; border: 1px solid var(--gold); color: #fff; border-radius: 10px; }
+        .god-input { width: 100%; padding: 10px; margin: 5px 0; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; }
+        .founder-aura { border: 3px solid var(--gold) !important; box-shadow: 0 0 15px var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="global-notify" onclick="godTrigger()">👑 V-PRO GLOBAL: OFFICIAL ELITE HUB | SUPREME GOD PANEL ACTIVE</div>
+    <div id="global-msg" class="global-notify" onclick="godTrigger()">👑 V-PRO GLOBAL: LOADING SUPREME ACCESS...</div>
 
-    <div class="container" style="padding-top:60px; padding-bottom:100px; height: 100vh; overflow-y: auto;">
+    <div class="container" style="padding-top:60px; padding-bottom:100px;">
         
-        <div id="tab-god" class="tab-content hidden" style="padding: 20px;">
-            <h2 style="color:var(--gold); text-align:center; font-size: 24px; letter-spacing: 2px;">🔱 GOD PANEL</h2>
-            <div class="card" style="border: 2px solid var(--gold);">
-                <h4 style="color:var(--gold)">V-COIN MANUFACTURING</h4>
-                <p style="font-size: 10px; color: #888;">Generate infinite coins for economy boost</p>
-                <input type="number" id="m-amount" class="god-input" placeholder="Enter amount to manufacture...">
-                <button class="btn-gold" onclick="manufactureCoins()">GENERATE & INJECT</button>
-            </div>
+        <div id="tab-god" class="tab-content hidden" style="padding: 15px;">
+            <h2 style="color:var(--gold); text-align:center;">🔱 MASTER CONTROL</h2>
+            
             <div class="card">
-                <h4 style="color:var(--gold)">LEADERBOARD HISTORY</h4>
-                <div id="archive-list" style="margin-top:15px; font-size:12px; color:#aaa; line-height: 2;">
-                    Fetching weekly snapshots...
+                <h4 style="color:var(--gold)">GLOBAL ANNOUNCEMENT</h4>
+                <input type="text" id="g-notify" class="god-input" placeholder="Enter Global Message...">
+                <button class="btn-gold" onclick="updateGlobalNotify()">SEND ANNOUNCEMENT</button>
+            </div>
+
+            <div class="card">
+                <h4 style="color:var(--gold)">MANAGER & FEATURE LOCK</h4>
+                <input type="text" id="mgr-id" class="god-input" placeholder="User VPG-ID">
+                <div style="display:flex; gap:5px;">
+                    <button class="btn-gold" style="font-size:10px;" onclick="setRole('Manager')">HIRE MGR</button>
+                    <button class="btn-gold" style="background:red; font-size:10px;" onclick="setRole('User')">FIRE MGR</button>
                 </div>
+                <hr style="margin:15px 0; border:0.5px solid #222;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                    <button class="btn-gold" style="background:#222; color:#fff;" onclick="toggleFeature('shop')">SHOP ON/OFF</button>
+                    <button class="btn-gold" style="background:#222; color:#fff;" onclick="toggleFeature('tasks')">TASKS ON/OFF</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4 style="color:var(--gold)">COIN MANUFACTURING</h4>
+                <input type="number" id="m-amount" class="god-input" placeholder="Amount...">
+                <button class="btn-gold" onclick="manufactureCoins()">INJECT COINS</button>
             </div>
         </div>
 
         <div id="tab-profile" class="tab-content hidden" style="text-align:center;">
-            <div class="avatar-wrapper">
-                <img id="u-img" src="https://via.placeholder.com/150" class="avatar">
-                <div id="u-medal-icon" style="position:absolute; top:-10px; right:10px; font-size:25px;"></div>
+            <div style="position:relative; width:100px; margin:auto;">
+                <img id="u-img" src="" class="avatar" style="width:100px; height:100px; border-radius:50%;">
+                <div id="u-medals" style="position:absolute; bottom:-5px; width:100%; font-size:18px;"></div>
             </div>
-            
-            <h2 id="u-name" style="margin-top:15px;">---</h2>
-            <div id="v-status" style="margin-bottom: 20px;"></div>
+            <h2 id="u-name" style="margin-top:10px;">---</h2>
+            <p id="u-bio" style="font-size:11px; color:#777;">Loading bio...</p>
+            <button class="btn-gold" style="width:80px; font-size:10px; height:25px; margin-top:5px;" onclick="switchTab('edit')">EDIT</button>
 
-            <div style="display:flex; justify-content:space-around; margin:20px 0;">
-                <div class="card" style="flex:1; margin:5px;">💎 <b id="u-coins">0</b><br><small>V-COINS</small></div>
-                <div class="card" style="flex:1; margin:5px;">⭐ <b id="u-rank">#--</b><br><small>GLOBAL RANK</small></div>
+            <div style="display:flex; gap:10px; padding:15px;">
+                <div class="card" style="flex:1;">💎 <b id="u-coins">0</b><br><small>V-COINS</small></div>
+                <div class="card" style="flex:1;">⭐ <b id="u-rank">#--</b><br><small>RANK</small></div>
             </div>
 
-            <div class="card" style="text-align: left;">
-                <h3 style="color:var(--gold); margin-bottom:15px; font-size:16px;">Task Center & Rewards</h3>
-                <div class="task-row">
-                    <div>
-                        <h4>Daily Scroll (Active Engagement)</h4>
-                        <p id="timer-text">Progress: 0/10m</p>
+            <div class="card" id="task-section">
+                <h4 style="color:var(--gold); text-align:left;">📅 DAILY SIGN-IN</h4>
+                <div class="signin-grid" id="signin-grid">
                     </div>
-                    <b style="color:var(--gold);">+70 VC</b>
-                </div>
-                <div class="task-row">
-                    <div>
-                        <h4>Loyalty Strike (21 Days)</h4>
-                        <p id="strike-text">Consecutive Days: 0/21</p>
-                    </div>
-                    <b style="color:var(--gold);">+1500 VC</b>
-                </div>
+                <button id="claim-day-btn" class="btn-gold" style="margin-top:15px; display:none;" onclick="claimDaily()">CLAIM TODAY'S REWARD</button>
             </div>
-            
-            <button class="btn-gold" style="background:#111; color:#555; margin-top:20px; font-size:10px;" onclick="auth.signOut().then(()=>location.reload())">LOGOUT SESSION</button>
+        </div>
+
+        <div id="tab-edit" class="tab-content hidden" style="padding:20px;">
+            <h3 style="color:var(--gold)">Edit Profile</h3>
+            <label>Nickname</label><input type="text" id="edit-name" class="god-input">
+            <label>Birthday</label><input type="date" id="edit-dob" class="god-input">
+            <label>Personal Bio</label><textarea id="edit-bio" class="god-input" style="height:80px;"></textarea>
+            <button class="btn-gold" onclick="saveProfile()">SAVE CHANGES</button>
+            <button class="btn-gold" style="background:#222; color:#fff; margin-top:10px;" onclick="switchTab('profile')">CANCEL</button>
         </div>
 
         <div id="tab-shop" class="tab-content">
             <div style="padding: 20px; text-align: center;">
                 <h2 style="color:var(--gold)">V-PRO SHOP</h2>
-                <div class="card">
-                    <img src="https://via.placeholder.com/400" style="width:100%; border-radius:15px;">
-                    <h3 style="margin-top:10px;">Elite Membership</h3>
-                    <p style="color:var(--gold)">₹4,999</p>
-                    <button class="btn-gold" style="margin-top:10px;">BUY NOW</button>
+                <div id="shop-content" class="card">
+                    <p>Elite Shop is Active</p>
+                    <button class="btn-gold">Buy Membership</button>
                 </div>
+                <div id="shop-closed" class="hidden" style="color:red;">Shop is temporarily closed by Founder.</div>
             </div>
         </div>
 
@@ -143,7 +142,6 @@
         const db = firebase.firestore();
 
         let userData = {};
-        let scrollSeconds = 0;
         let tapCount = 0;
 
         auth.onAuthStateChanged(async user => {
@@ -151,106 +149,131 @@
                 const doc = await db.collection('users').doc(user.uid).get();
                 if(doc.exists) {
                     userData = doc.data();
-                    loadProfileData(userData, user);
-                    initEngagementTracker();
+                    syncRealtime();
+                    loadProfile();
+                    renderDailyGrid();
                 } else {
-                    // Initialize new user
-                    const newData = { name: user.displayName, vCoins: 150, role: "User", joinedAt: new Date() };
-                    await db.collection('users').doc(user.uid).set(newData);
+                    await db.collection('users').doc(user.uid).set({
+                        name: user.displayName, vCoins: 100, role: "User", 
+                        uniqueId: "VPG-" + Math.floor(1000 + Math.random() * 9000),
+                        medals: [], lastClaimed: null, streak: 0
+                    });
                     location.reload();
                 }
             } else { login(); }
         });
 
-        function loadProfileData(data, user) {
-            document.getElementById('u-name').innerText = data.name || user.displayName;
-            document.getElementById('u-img').src = data.profilePic || user.photoURL;
-            document.getElementById('u-coins').innerText = (data.vCoins || 0).toLocaleString();
-            
-            // KING/BOSS EXCLUSIVE CHECK
-            if(user.email === "dreamchat26@gmail.com") {
-                document.getElementById('u-img').classList.add('founder-aura');
-                document.getElementById('v-status').innerHTML = "<span style='background:var(--gold); color:#000; padding:2px 10px; border-radius:5px; font-size:10px; font-weight:900;'>FOUNDER & MASTER</span>";
-            } else {
-                document.getElementById('v-status').innerHTML = `<small style='color:#555;'>RANK: ${data.role || 'Elite Member'}</small>`;
-            }
-
-            // MEDAL SYSTEM (Automatic Display)
-            if(data.topMedal) {
-                document.getElementById('u-medal-icon').innerText = data.topMedal; // e.g., 🥇
-            }
-        }
-
-        // --- TASK & SCROLL TRACKER ---
-        function initEngagementTracker() {
-            setInterval(() => {
-                if(!document.hidden) {
-                    scrollSeconds++;
-                    let mins = Math.floor(scrollSeconds / 60);
-                    if(mins <= 10) {
-                        document.getElementById('timer-text').innerText = `Progress: ${mins}/10m`;
-                    }
-                    if(scrollSeconds === 600) {
-                        rewardEngagement("Daily Scroll", 70);
-                    }
+        // --- REALTIME SYNC (Global Notify & Feature Lock) ---
+        function syncRealtime() {
+            db.collection('system').doc('config').onSnapshot(doc => {
+                const data = doc.data();
+                document.getElementById('global-msg').innerText = data.notification;
+                
+                // Feature Kill-Switch Logic
+                if(data.shopStatus === 'OFF') {
+                    document.getElementById('shop-content').classList.add('hidden');
+                    document.getElementById('shop-closed').classList.remove('hidden');
+                } else {
+                    document.getElementById('shop-content').classList.remove('hidden');
+                    document.getElementById('shop-closed').classList.add('hidden');
                 }
-            }, 1000);
-        }
-
-        async function rewardEngagement(type, amount) {
-            const userRef = db.collection('users').doc(auth.currentUser.uid);
-            await userRef.update({
-                vCoins: firebase.firestore.FieldValue.increment(amount)
             });
-            alert(`🏆 SUCCESS: Received ${amount} V-Coins for ${type}!`);
         }
 
-        // --- GOD PANEL LOGIC (7 TAPS ON TOP NOTIFY) ---
-        function godTrigger() {
-            if(auth.currentUser && auth.currentUser.email === "dreamchat26@gmail.com") {
-                tapCount++;
-                if(tapCount >= 7) {
-                    switchTab('god');
-                    loadLeaderboardArchives();
-                    tapCount = 0;
-                }
-                setTimeout(() => tapCount = 0, 5000);
+        function loadProfile() {
+            document.getElementById('u-name').innerText = userData.name;
+            document.getElementById('u-bio').innerText = userData.bio || "No bio set.";
+            document.getElementById('u-img').src = userData.profilePic || auth.currentUser.photoURL;
+            document.getElementById('u-coins').innerText = userData.vCoins.toLocaleString();
+            document.getElementById('u-medals').innerText = (userData.medals || []).join(" ");
+            
+            if(auth.currentUser.email === "dreamchat26@gmail.com") {
+                document.getElementById('u-img').classList.add('founder-aura');
             }
+        }
+
+        // --- DAILY SIGN IN LOGIC ---
+        function renderDailyGrid() {
+            const grid = document.getElementById('signin-grid');
+            grid.innerHTML = "";
+            for(let i=1; i<=7; i++) {
+                const box = document.createElement('div');
+                box.className = `day-box ${userData.streak >= i ? 'claimed' : (userData.streak + 1 === i ? 'active' : '')}`;
+                box.innerHTML = `Day ${i}<br><b>${i*50} VC</b>`;
+                grid.appendChild(box);
+            }
+            
+            // Check if already claimed today
+            const today = new Date().toDateString();
+            if(userData.lastClaimed !== today) {
+                document.getElementById('claim-day-btn').style.display = 'block';
+            }
+        }
+
+        async function claimDaily() {
+            const today = new Date().toDateString();
+            const newStreak = (userData.streak >= 7) ? 1 : userData.streak + 1;
+            const reward = newStreak * 50;
+
+            await db.collection('users').doc(auth.currentUser.uid).update({
+                vCoins: firebase.firestore.FieldValue.increment(reward),
+                streak: newStreak,
+                lastClaimed: today
+            });
+            alert(`Claimed Day ${newStreak} Reward: ${reward} VC!`);
+            location.reload();
+        }
+
+        // --- GOD PANEL FUNCTIONS ---
+        async function updateGlobalNotify() {
+            const msg = document.getElementById('g-notify').value;
+            await db.collection('system').doc('config').update({ notification: msg });
+            alert("Global Notification Updated!");
+        }
+
+        async function setRole(role) {
+            const uid = document.getElementById('mgr-id').value;
+            const snap = await db.collection('users').where('uniqueId', '==', uid).get();
+            if(snap.empty) return alert("User not found!");
+            await snap.docs[0].ref.update({ role: role });
+            alert(`User ${uid} is now a ${role}`);
+        }
+
+        async function toggleFeature(feat) {
+            const doc = await db.collection('system').doc('config').get();
+            const status = doc.data()[feat + 'Status'] === 'ON' ? 'OFF' : 'ON';
+            let update = {}; update[feat + 'Status'] = status;
+            await db.collection('system').doc('config').update(update);
+            alert(`${feat.toUpperCase()} is now ${status}`);
         }
 
         async function manufactureCoins() {
-            const amount = parseInt(document.getElementById('m-amount').value);
-            if(!amount || amount <= 0) return alert("Enter valid manufacturing amount.");
-            
-            const userRef = db.collection('users').doc(auth.currentUser.uid);
-            await userRef.update({
-                vCoins: firebase.firestore.FieldValue.increment(amount),
-                lastManufactured: new Date()
+            const amt = parseInt(document.getElementById('m-amount').value);
+            await db.collection('users').doc(auth.currentUser.uid).update({
+                vCoins: firebase.firestore.FieldValue.increment(amt)
             });
-            
-            // Record in System Logs
-            await db.collection('system_logs').add({
-                action: "COIN_MANUFACTURE",
-                amount: amount,
-                timestamp: new Date()
-            });
-
-            document.getElementById('u-coins').innerText = (parseInt(document.getElementById('u-coins').innerText.replace(/,/g,'')) + amount).toLocaleString();
-            alert(`🔱 GOD POWER: ${amount} V-Coins injected into your wallet.`);
+            alert("Coins Injected!");
         }
 
-        async function loadLeaderboardArchives() {
-            const listDiv = document.getElementById('archive-list');
-            const archives = await db.collection('leaderboard_archives').orderBy('timestamp', 'desc').limit(10).get();
-            
-            let html = "";
-            archives.forEach(doc => {
-                const d = doc.data();
-                html += `<div style="border-bottom: 1px solid #222; padding: 5px 0;">
-                            <b>Week: ${doc.id}</b> | Winners: ${d.totalWinners} | Status: <span style="color:green;">Archived</span>
-                         </div>`;
-            });
-            listDiv.innerHTML = html || "No history records found in vault.";
+        function godTrigger() {
+            const email = auth.currentUser.email;
+            // Founder access or Manager access
+            if(email === "dreamchat26@gmail.com" || userData.role === 'Manager') {
+                tapCount++;
+                if(tapCount >= 7) { switchTab('god'); tapCount = 0; }
+            }
+        }
+
+        // --- PROFILE EDIT ---
+        async function saveProfile() {
+            const updates = {
+                name: document.getElementById('edit-name').value,
+                dob: document.getElementById('edit-dob').value,
+                bio: document.getElementById('edit-bio').value
+            };
+            await db.collection('users').doc(auth.currentUser.uid).update(updates);
+            alert("Profile Saved!");
+            location.reload();
         }
 
         function switchTab(id, el) {
@@ -260,6 +283,13 @@
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 el.classList.add('active');
             }
+            if(id === 'edit') loadEditData();
+        }
+
+        function loadEditData() {
+            document.getElementById('edit-name').value = userData.name || "";
+            document.getElementById('edit-bio').value = userData.bio || "";
+            document.getElementById('edit-dob').value = userData.dob || "";
         }
 
         async function login() { 
