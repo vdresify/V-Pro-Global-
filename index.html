@@ -27,111 +27,105 @@
         .hidden { display: none !important; }
         .card { background: var(--card); border: 1px solid #1a1a1a; padding: 15px; border-radius: 20px; margin: 10px; position: relative; }
         .btn-gold { width: 100%; padding: 12px; background: var(--gold); color: #000; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
-        .btn-gold:active { transform: scale(0.95); opacity: 0.8; }
         
-        /* NOTIFICATION */
-        .global-notify { background: var(--rainbow); background-size: 400%; padding: 6px; text-align: center; font-size: 10px; font-weight: 900; animation: rainbow-move 5s linear infinite; position: fixed; top: 0; width: 100%; z-index: 5000; color: #fff; }
-        @keyframes rainbow-move { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
-
-        /* SEARCH BAR */
-        .search-container { padding: 10px 15px; position: fixed; top: 35px; width: 100%; z-index: 4000; background: rgba(0,0,0,0.85); border-bottom: 1px solid #222; }
-        .search-box { width: 100%; padding: 10px 15px; border-radius: 25px; border: 1px solid #333; background: #111; color: #fff; outline: none; }
+        /* FOUNDER EXCLUSIVE FRAME */
+        .founder-aura { border: 4px solid var(--gold) !important; box-shadow: 0 0 25px var(--gold) !important; border-radius: 50% !important; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 25px var(--gold); } 50% { opacity: 0.8; box-shadow: 0 0 45px var(--gold); } 100% { opacity: 1; box-shadow: 0 0 25px var(--gold); } }
 
         /* AVATAR SYSTEM */
-        .avatar-wrapper { position: relative; width: 110px; height: 110px; margin: auto; display: flex; align-items: center; justify-content: center; }
-        .avatar { width: 85px; height: 85px; border-radius: 50%; z-index: 2; object-fit: cover; border: 2px solid #000; }
-        .frame-vip7 { position: absolute; width: 105px; height: 105px; border-radius: 50%; border: 4px solid transparent; background: var(--rainbow) border-box; mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0); -webkit-mask-composite: destination-out; animation: spin 2s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .avatar-wrapper { position: relative; width: 110px; height: 110px; margin: auto; display: flex; align-items: center; justify-content: center; margin-top: 20px;}
+        .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #1a1a1a; }
 
-        /* INTERACTION BAR */
-        .interaction-bar { display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #111; margin-top: 10px; }
-        .action-btn { color: #888; font-size: 18px; cursor: pointer; text-align: center; }
-        .action-btn.liked { color: var(--red); }
-        .action-btn span { display: block; font-size: 10px; margin-top: 2px; }
+        /* TASK CENTER UI */
+        .task-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 12px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); }
+        .task-row h4 { font-size: 13px; color: #fff; }
+        .task-row p { font-size: 10px; color: #777; }
 
-        /* HIDDEN BUSINESS CARD */
-        #vpg-card {
-            width: 350px; height: 200px; position: absolute; left: -9999px;
-            background: linear-gradient(135deg, #0f0f0f, #000); border: 2px solid var(--gold);
-            border-radius: 20px; padding: 20px; color: #fff;
-        }
+        .global-notify { background: var(--rainbow); background-size: 400%; padding: 8px; text-align: center; font-size: 10px; font-weight: 900; animation: rainbow-move 5s linear infinite; position: fixed; top: 0; width: 100%; z-index: 5000; color: #fff; cursor: pointer; }
+        @keyframes rainbow-move { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.98); border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 12px 0; z-index: 3000; }
-        .nav-item { color: #555; text-align: center; flex: 1; cursor: pointer; font-size: 18px; }
+        .nav-item { color: #555; text-align: center; flex: 1; cursor: pointer; font-size: 20px; }
         .nav-item.active { color: var(--gold); }
-        .nav-item span { display: block; font-size: 9px; margin-top: 4px; }
+        .nav-item span { display: block; font-size: 9px; margin-top: 4px; font-weight: bold;}
+
+        /* GOD PANEL STYLING */
+        .god-input { width: 100%; padding: 12px; margin: 10px 0; background: #111; border: 1px solid var(--gold); color: #fff; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="global-notify">👑 V-PRO GLOBAL: OFFICIAL ELITE HUB | 45-DAY POLICY ACTIVE</div>
+    <div class="global-notify" onclick="godTrigger()">👑 V-PRO GLOBAL: OFFICIAL ELITE HUB | SUPREME GOD PANEL ACTIVE</div>
 
-    <div id="google_translate_element" style="position:fixed; top:5px; right:5px; z-index:6000; opacity:0.8;"></div>
-
-    <div class="search-container">
-        <input type="text" class="search-box" placeholder="Search VPG-ID or Friends..." onkeyup="searchGlobal(this.value)">
-    </div>
-
-    <div class="container" style="padding-top:100px; padding-bottom:80px;">
+    <div class="container" style="padding-top:60px; padding-bottom:100px; height: 100vh; overflow-y: auto;">
         
-        <div id="tab-shop" class="tab-content">
+        <div id="tab-god" class="tab-content hidden" style="padding: 20px;">
+            <h2 style="color:var(--gold); text-align:center; font-size: 24px; letter-spacing: 2px;">🔱 GOD PANEL</h2>
+            <div class="card" style="border: 2px solid var(--gold);">
+                <h4 style="color:var(--gold)">V-COIN MANUFACTURING</h4>
+                <p style="font-size: 10px; color: #888;">Generate infinite coins for economy boost</p>
+                <input type="number" id="m-amount" class="god-input" placeholder="Enter amount to manufacture...">
+                <button class="btn-gold" onclick="manufactureCoins()">GENERATE & INJECT</button>
+            </div>
             <div class="card">
-                <img src="https://via.placeholder.com/600x600" style="width:100%; border-radius:15px; border:1px solid #222;">
-                <h3 style="margin-top:10px;">V-Pro Luxury Kit</h3>
-                <p style="color:var(--gold); font-weight:bold; font-size:18px;">₹2,999</p>
-                <div class="interaction-bar">
-                    <div class="action-btn" onclick="toggleLike(this)"><i class="fas fa-heart"></i><span>1.5k</span></div>
-                    <div class="action-btn" onclick="shareContent('Luxury Kit', 'Check this on V-Pro Global', location.href)"><i class="fas fa-share-alt"></i><span>SHARE</span></div>
-                    <div class="btn-gold" style="width:100px; padding:6px; font-size:12px;">BUY</div>
+                <h4 style="color:var(--gold)">LEADERBOARD HISTORY</h4>
+                <div id="archive-list" style="margin-top:15px; font-size:12px; color:#aaa; line-height: 2;">
+                    Fetching weekly snapshots...
                 </div>
             </div>
         </div>
 
         <div id="tab-profile" class="tab-content hidden" style="text-align:center;">
-            <div class="avatar-wrapper" onclick="document.getElementById('uploadInput').click()">
-                <div id="u-frame"></div>
+            <div class="avatar-wrapper">
                 <img id="u-img" src="https://via.placeholder.com/150" class="avatar">
-                <div style="position:absolute; bottom:8px; right:12px; background:var(--gold); border-radius:50%; width:26px; height:26px; color:#000; display:flex; align-items:center; justify-content:center; border:2px solid #000; font-size:12px;"><i class="fas fa-camera"></i></div>
+                <div id="u-medal-icon" style="position:absolute; top:-10px; right:10px; font-size:25px;"></div>
             </div>
-            <input type="file" id="uploadInput" class="hidden" accept="image/*" onchange="handleProfileUpload(this.files[0])">
             
-            <h2 id="u-name" style="margin-top:10px;">---</h2>
-            <p id="u-vpgid" style="color:var(--gold); font-size:12px; letter-spacing:1.5px;">VPG-ID</p>
+            <h2 id="u-name" style="margin-top:15px;">---</h2>
+            <div id="v-status" style="margin-bottom: 20px;"></div>
 
             <div style="display:flex; justify-content:space-around; margin:20px 0;">
-                <div class="card" style="flex:1; margin:5px;">💎 <b id="u-coins">0</b><br><small>DIAMONDS</small></div>
-                <div class="card" style="flex:1; margin:5px;">👥 <b id="u-followers">0</b><br><small>FOLLOWERS</small></div>
+                <div class="card" style="flex:1; margin:5px;">💎 <b id="u-coins">0</b><br><small>V-COINS</small></div>
+                <div class="card" style="flex:1; margin:5px;">⭐ <b id="u-rank">#--</b><br><small>GLOBAL RANK</small></div>
             </div>
 
-            <div class="card" style="border:1px dashed var(--gold); background:rgba(212,175,55,0.05);">
-                <h4 style="color:var(--gold);">ELITE REFERRAL CARD</h4>
-                <p style="font-size:10px; color:#888; margin:10px 0;">Invite users with your personal business card & get 5000 Diamonds.</p>
-                <button class="btn-gold" id="genBtn" onclick="generateAndShareCard()">GENERATE & SHARE CARD</button>
+            <div class="card" style="text-align: left;">
+                <h3 style="color:var(--gold); margin-bottom:15px; font-size:16px;">Task Center & Rewards</h3>
+                <div class="task-row">
+                    <div>
+                        <h4>Daily Scroll (Active Engagement)</h4>
+                        <p id="timer-text">Progress: 0/10m</p>
+                    </div>
+                    <b style="color:var(--gold);">+70 VC</b>
+                </div>
+                <div class="task-row">
+                    <div>
+                        <h4>Loyalty Strike (21 Days)</h4>
+                        <p id="strike-text">Consecutive Days: 0/21</p>
+                    </div>
+                    <b style="color:var(--gold);">+1500 VC</b>
+                </div>
             </div>
             
-            <button class="btn-gold" style="background:#222; color:#555; margin-top:30px; font-size:10px;" onclick="auth.signOut().then(()=>location.reload())">LOGOUT</button>
+            <button class="btn-gold" style="background:#111; color:#555; margin-top:20px; font-size:10px;" onclick="auth.signOut().then(()=>location.reload())">LOGOUT SESSION</button>
         </div>
-    </div>
 
-    <div id="vpg-card">
-        <div style="height:6px; background:var(--rainbow); position:absolute; top:0; left:0; width:100%;"></div>
-        <div style="display:flex; align-items:center; margin-top:20px;">
-            <img id="c-img" src="" style="width:70px; height:70px; border-radius:50%; border:2px solid var(--gold); object-fit:cover;">
-            <div style="margin-left:20px;">
-                <h3 id="c-name" style="margin:0; font-size:18px;">---</h3>
-                <p id="c-tag" style="font-size:10px; color:var(--gold); font-weight:bold;">OFFICIAL ELITE MEMBER</p>
-                <p id="c-id" style="font-size:14px; font-weight:900; margin-top:8px; letter-spacing:1px;">VPG-000</p>
+        <div id="tab-shop" class="tab-content">
+            <div style="padding: 20px; text-align: center;">
+                <h2 style="color:var(--gold)">V-PRO SHOP</h2>
+                <div class="card">
+                    <img src="https://via.placeholder.com/400" style="width:100%; border-radius:15px;">
+                    <h3 style="margin-top:10px;">Elite Membership</h3>
+                    <p style="color:var(--gold)">₹4,999</p>
+                    <button class="btn-gold" style="margin-top:10px;">BUY NOW</button>
+                </div>
             </div>
         </div>
-        <div style="margin-top:25px; font-size:9px; color:#666; border-top:1px solid #222; padding-top:10px; display:flex; justify-content:space-between;">
-            <span>V-PRO GLOBAL HUB © 2026</span>
-            <span style="color:var(--gold);">SCAN TO JOIN</span>
-        </div>
+
     </div>
 
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('shop', this)"><i class="fas fa-shopping-bag"></i><span>SHOP</span></div>
-        <div class="nav-item" onclick="switchTab('reels', this)"><i class="fas fa-play-circle"></i><span>REELS</span></div>
         <div class="nav-item" onclick="switchTab('profile', this)"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
     </div>
 
@@ -147,81 +141,131 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const storage = firebase.storage();
+
+        let userData = {};
+        let scrollSeconds = 0;
+        let tapCount = 0;
 
         auth.onAuthStateChanged(async user => {
             if(user) {
                 const doc = await db.collection('users').doc(user.uid).get();
-                if(doc.exists) loadUserData(doc.data(), user);
+                if(doc.exists) {
+                    userData = doc.data();
+                    loadProfileData(userData, user);
+                    initEngagementTracker();
+                } else {
+                    // Initialize new user
+                    const newData = { name: user.displayName, vCoins: 150, role: "User", joinedAt: new Date() };
+                    await db.collection('users').doc(user.uid).set(newData);
+                    location.reload();
+                }
             } else { login(); }
         });
 
-        function loadUserData(data, user) {
-            const genderTag = data.gender === 'Male' ? ' <i class="fas fa-shield-alt" style="color:var(--neon-blue);"></i>' : ' <i class="fas fa-crown" style="color:var(--neon-pink);"></i>';
-            document.getElementById('u-name').innerHTML = (data.name || user.displayName) + genderTag;
-            document.getElementById('u-vpgid').innerText = "ID: " + (data.uniqueId || "VPG-NEW");
-            document.getElementById('u-coins').innerText = data.vCoins || 0;
+        function loadProfileData(data, user) {
+            document.getElementById('u-name').innerText = data.name || user.displayName;
             document.getElementById('u-img').src = data.profilePic || user.photoURL;
-            if(data.vipLevel > 0) document.getElementById('u-frame').className = `frame-vip${data.vipLevel}`;
+            document.getElementById('u-coins').innerText = (data.vCoins || 0).toLocaleString();
+            
+            // KING/BOSS EXCLUSIVE CHECK
+            if(user.email === "dreamchat26@gmail.com") {
+                document.getElementById('u-img').classList.add('founder-aura');
+                document.getElementById('v-status').innerHTML = "<span style='background:var(--gold); color:#000; padding:2px 10px; border-radius:5px; font-size:10px; font-weight:900;'>FOUNDER & MASTER</span>";
+            } else {
+                document.getElementById('v-status').innerHTML = `<small style='color:#555;'>RANK: ${data.role || 'Elite Member'}</small>`;
+            }
+
+            // MEDAL SYSTEM (Automatic Display)
+            if(data.topMedal) {
+                document.getElementById('u-medal-icon').innerText = data.topMedal; // e.g., 🥇
+            }
         }
 
-        async function handleProfileUpload(file) {
-            if(!file) return;
-            const ref = storage.ref(`profiles/${auth.currentUser.uid}`);
-            alert("Uploading Profile GIF/Photo...");
-            await ref.put(file);
-            const url = await ref.getDownloadURL();
-            await db.collection('users').doc(auth.currentUser.uid).update({ profilePic: url });
-            document.getElementById('u-img').src = url;
-            alert("Upload Success!");
+        // --- TASK & SCROLL TRACKER ---
+        function initEngagementTracker() {
+            setInterval(() => {
+                if(!document.hidden) {
+                    scrollSeconds++;
+                    let mins = Math.floor(scrollSeconds / 60);
+                    if(mins <= 10) {
+                        document.getElementById('timer-text').innerText = `Progress: ${mins}/10m`;
+                    }
+                    if(scrollSeconds === 600) {
+                        rewardEngagement("Daily Scroll", 70);
+                    }
+                }
+            }, 1000);
         }
 
-        async function generateAndShareCard() {
-            const btn = document.getElementById('genBtn');
-            btn.innerText = "⚡ GENERATING CARD...";
-            const userDoc = await db.collection('users').doc(auth.currentUser.uid).get();
-            const u = userDoc.data();
-
-            document.getElementById('c-name').innerText = u.name;
-            document.getElementById('c-img').src = u.profilePic || auth.currentUser.photoURL;
-            document.getElementById('c-id').innerText = u.uniqueId;
-
-            await new Promise(r => setTimeout(r, 1000));
-
-            const canvas = await html2canvas(document.getElementById('vpg-card'), { useCORS: true });
-            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-            const file = new File([blob], 'VPG_Elite_Card.png', {type: 'image/png'});
-
-            if (navigator.share) {
-                const refLink = `${location.origin}?ref=${u.uniqueId}`;
-                await navigator.share({
-                    files: [file],
-                    title: 'V-Pro Global Elite Card',
-                    text: `Join the supreme hub. Referral ID: ${u.uniqueId}`,
-                    url: refLink
-                });
-            } else { alert("Card Generated! Link Copied."); }
-            btn.innerText = "GENERATE & SHARE CARD";
+        async function rewardEngagement(type, amount) {
+            const userRef = db.collection('users').doc(auth.currentUser.uid);
+            await userRef.update({
+                vCoins: firebase.firestore.FieldValue.increment(amount)
+            });
+            alert(`🏆 SUCCESS: Received ${amount} V-Coins for ${type}!`);
         }
 
-        function toggleLike(el) {
-            el.classList.toggle('liked');
-            const heart = el.querySelector('i');
-            heart.className = el.classList.contains('liked') ? 'fas fa-heart' : 'far fa-heart';
+        // --- GOD PANEL LOGIC (7 TAPS ON TOP NOTIFY) ---
+        function godTrigger() {
+            if(auth.currentUser && auth.currentUser.email === "dreamchat26@gmail.com") {
+                tapCount++;
+                if(tapCount >= 7) {
+                    switchTab('god');
+                    loadLeaderboardArchives();
+                    tapCount = 0;
+                }
+                setTimeout(() => tapCount = 0, 5000);
+            }
         }
 
-        async function shareContent(t, s, u) { if(navigator.share) await navigator.share({title:t, text:s, url:u}); }
+        async function manufactureCoins() {
+            const amount = parseInt(document.getElementById('m-amount').value);
+            if(!amount || amount <= 0) return alert("Enter valid manufacturing amount.");
+            
+            const userRef = db.collection('users').doc(auth.currentUser.uid);
+            await userRef.update({
+                vCoins: firebase.firestore.FieldValue.increment(amount),
+                lastManufactured: new Date()
+            });
+            
+            // Record in System Logs
+            await db.collection('system_logs').add({
+                action: "COIN_MANUFACTURE",
+                amount: amount,
+                timestamp: new Date()
+            });
+
+            document.getElementById('u-coins').innerText = (parseInt(document.getElementById('u-coins').innerText.replace(/,/g,'')) + amount).toLocaleString();
+            alert(`🔱 GOD POWER: ${amount} V-Coins injected into your wallet.`);
+        }
+
+        async function loadLeaderboardArchives() {
+            const listDiv = document.getElementById('archive-list');
+            const archives = await db.collection('leaderboard_archives').orderBy('timestamp', 'desc').limit(10).get();
+            
+            let html = "";
+            archives.forEach(doc => {
+                const d = doc.data();
+                html += `<div style="border-bottom: 1px solid #222; padding: 5px 0;">
+                            <b>Week: ${doc.id}</b> | Winners: ${d.totalWinners} | Status: <span style="color:green;">Archived</span>
+                         </div>`;
+            });
+            listDiv.innerHTML = html || "No history records found in vault.";
+        }
 
         function switchTab(id, el) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.getElementById('tab-' + id).classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                el.classList.add('active');
+            }
         }
 
-        function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element'); }
-        async function login() { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+        async function login() { 
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await auth.signInWithPopup(provider);
+        }
     </script>
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
